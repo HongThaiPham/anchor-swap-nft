@@ -8,7 +8,9 @@ pub struct Create<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
     #[account(
-        mint::token_program = token_program
+        mint::decimals = 0,
+        mint::token_program = token_program,
+        mint::authority = signer
     )]
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(
@@ -50,7 +52,7 @@ impl<'info> Create<'info> {
                 mint: self.mint.to_account_info(), 
                 to: self.item_ata.to_account_info(), 
                 authority: self.signer.to_account_info() 
-            }), 1, 0)?;
+            }), 1, self.mint.decimals)?;
         Ok(())
     }
 }
