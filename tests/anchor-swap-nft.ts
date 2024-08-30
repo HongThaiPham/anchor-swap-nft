@@ -9,7 +9,7 @@ import {
   mplTokenMetadata,
 } from "@metaplex-foundation/mpl-token-metadata";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
-import { getAssociatedTokenAddress } from "@solana/spl-token";
+import { createMint, getAssociatedTokenAddress } from "@solana/spl-token";
 import {
   generateSigner,
   percentAmount,
@@ -35,19 +35,18 @@ describe("anchor-swap-nft", () => {
     user2: user2.publicKey.toBase58(),
   });
 
-  const umi = createUmi("http://127.0.0.1:8899").use(mplTokenMetadata());
+  // const umi = createUmi("http://127.0.0.1:8899").use(mplTokenMetadata());
   // .use(walletAdapterIdentity(provider.wallet, true));
 
-  const umiSigner = generateSigner(umi);
+  // const umiSigner = generateSigner(umi);
 
-  umi.use(signerIdentity(umiSigner));
+  // umi.use(signerIdentity(umiSigner));
 
   const [mintX, mintY] = [web3.Keypair.generate(), web3.Keypair.generate()];
 
   console.table({
     mintX: mintX.publicKey.toBase58(),
     mintY: mintY.publicKey.toBase58(),
-    umiSigner: umiSigner.publicKey,
   });
 
   before("Setup", async () => {
@@ -61,7 +60,7 @@ describe("anchor-swap-nft", () => {
       });
       await provider.connection.confirmTransaction({
         signature: await provider.connection.requestAirdrop(
-          new web3.PublicKey(umiSigner.publicKey),
+          new web3.PublicKey(maker.publicKey),
           10 * anchor.web3.LAMPORTS_PER_SOL
         ),
         ...(await provider.connection.getLatestBlockhash()),
@@ -79,31 +78,27 @@ describe("anchor-swap-nft", () => {
       //   mintX.publicKey,
       //   provider.publicKey
       // );
-
       // let [metadataAccount] = findMetadataPda(umi, {
       //   mint: publicKey(mintX.publicKey),
       // });
-
       // let [masterEditionAccount] = findMasterEditionPda(umi, {
       //   mint: publicKey(mintX.publicKey),
       // });
-      const mint = generateSigner(umi);
-      const metadata = {
-        name: "ONE NFT",
-        symbol: "ONFT",
-        uri: "https://example.com/my-nft.json",
-      };
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, 10000);
-      });
-
-      await createNft(umi, {
-        mint: mint,
-        name: metadata.name,
-        uri: metadata.uri,
-        sellerFeeBasisPoints: percentAmount(5.5),
-      }).sendAndConfirm(umi);
+      // const mint = generateSigner(umi);
+      // const metadata = {
+      //   name: "ONE NFT",
+      //   symbol: "ONFT",
+      //   uri: "https://example.com/my-nft.json",
+      // };
+      // await new Promise((resolve) => {
+      //   setTimeout(resolve, 10000);
+      // });
+      // await createNft(umi, {
+      //   mint: mint,
+      //   name: metadata.name,
+      //   uri: metadata.uri,
+      //   sellerFeeBasisPoints: percentAmount(5.5),
+      // }).sendAndConfirm(umi);
     }
   });
 
